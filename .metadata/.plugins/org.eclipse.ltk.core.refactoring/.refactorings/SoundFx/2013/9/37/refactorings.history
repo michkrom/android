@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename package &apos;com.example.soundfx&apos; to &apos;com.brobit.soundfx&apos;&#x0A;- Original project: &apos;SoundFx&apos;&#x0A;- Original element: &apos;SoundFx/src/com.example.soundfx&apos;&#x0A;- Renamed element: &apos;SoundFx/src/com.brobit.soundfx&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;com.example.soundfx&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src&lt;com.example.soundfx" name="com.brobit.soundfx" qualified="false" references="true" stamp="1378878179644" textual="false" version="1.0"/>
+</session>

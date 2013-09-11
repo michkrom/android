@@ -4,38 +4,37 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-<RelativeLayout 
-    android:orientation="horizontal"
-    android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-    >
-    	<TextView
-		android:id="@+id/path"
-		android:layout_alignParentLeft="true"
-	    android:layout_width="fill_parent" 
-	    android:layout_height="wrap_content"	 
-	    android:textSize="20sp"    
-	    />
-		<Button
-		    android:id="@+id/pause"
-		    android:layout_alignParentRight="true"
-		    android:text="Stop"
-			android:layout_height="wrap_content"
-	     	android:layout_width="wrap_content"
-	     	android:onClick="Stop"
-		    />
-</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
-	<ListView
-	 android:id="@android:id/list"
-	 android:layout_width="fill_parent" 
-	    android:layout_height="wrap_content" 
-	 />
-	<TextView
-	 android:id="@android:id/empty"
-	 android:layout_width="fill_parent" 
-	    android:layout_height="wrap_content" 
-	    android:text="No Data"
-	 />
+        <TextView
+            android:id="@+id/path"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:onClick="Stop"
+            android:text="Stop" />
+    </RelativeLayout>
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice" />
+
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="No Data" />
 
 </LinearLayout>

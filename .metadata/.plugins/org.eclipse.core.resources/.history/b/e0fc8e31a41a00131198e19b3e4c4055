@@ -1,0 +1,172 @@
+package com.example.soundfx;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.AlertDialog;
+import android.app.ListActivity;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+
+public class MainActivity extends ListActivity implements MediaPlayer.OnCompletionListener {
+
+	private List<String> item = null;
+	private List<String> path = null;
+	private String root = "/";
+	private String curPath = "/";
+	private String lastPlayed = "";
+	private TextView myPath;
+	private Button pause;
+	private MediaPlayer mp;
+
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mp = new MediaPlayer();
+		mp.setOnCompletionListener(this);
+		setContentView(R.layout.main);
+		myPath = (TextView) findViewById(R.id.path);
+		pause = (Button) findViewById(R.id.pause);
+		restorePersState();
+		getDir(curPath);
+	}
+	
+	public void Stop(View view) {
+		pause.setEnabled(false);
+		stopPlaying();
+	}
+	
+	public void onCompletion(MediaPlayer mp)
+	{
+		lastPlayed = "";
+		updateStatusBar();
+		pause.setEnabled(false);
+	}
+	
+	void updateStatusBar() {
+		String s =  curPath + "\n";
+		if( lastPlayed.length()!=0 ) s += lastPlayed;
+		myPath.setText(s);
+		pause.setEnabled(mp.isPlaying());
+	}
+	
+	void stopPlaying() {
+		try {
+			if (mp.isPlaying()) {
+				mp.stop();
+				//mp.release();
+				lastPlayed="";
+				updateStatusBar();
+	        }
+		}
+		catch(Exception e)
+		{}
+	}
+	
+	void playFile(File file) {
+		stopPlaying();
+		lastPlayed = file.getName();
+		try {
+			mp.reset();
+			mp.setDataSource(file.getAbsolutePath());
+			mp.prepare();
+			mp.start();
+		} catch (Exception e) {
+			new AlertDialog.Builder(this)
+					// .setIcon(R.drawable.icon)
+					.setTitle("[" + file.getName() + "]")
+					.setMessage(e.toString())
+					.setPositiveButton("OK",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int which) {
+								}
+							}).show();
+			mp = new MediaPlayer();
+			mp.setOnCompletionListener(this);
+		}
+		updateStatusBar();
+	}
+
+	void getDir(String dirPath) {
+		// preserve for later
+        curPath = dirPath;
+        updateStatusBar();
+        
+		item = new ArrayList<String>();
+		path = new ArrayList<String>();
+
+		File f = new File(dirPath);
+		File[] files = f.listFiles();
+
+		if (!dirPath.equals(root)) {
+			item.add(root);
+			path.add(root);
+
+			item.add("../");
+			path.add(f.getParent());
+		}
+
+		for (int i = 0; i < files.length; i++) {
+			File file = files[i];
+			path.add(file.getPath());
+			if (file.isDirectory())
+				item.add(file.getName() + "/");
+			else
+				item.add(file.getName());
+		}
+
+		ArrayAdapter<String> fileList = new ArrayAdapter<String>(this,
+				R.layout.row, item);
+		setListAdapter(fileList);
+	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {		
+		storePersState();
+		File file = new File(path.get(position));
+
+		if (file.isDirectory()) {
+			if (file.canRead())
+				getDir(path.get(position));
+			else {
+				new AlertDialog.Builder(this)
+						// .setIcon(R.drawable.icon)
+						.setTitle(
+								"[" + file.getName()
+										+ "] folder can't be read!")
+						.setPositiveButton("OK",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int which) {
+									}
+								}).show();
+			}
+		} else {
+			playFile(file);
+		}
+	}
+	
+	void storePersState() {
+		  SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+		  SharedPreferences.Editor editor = preferences.edit();
+		  editor.putString("curPath",curPath); // value to store
+		  // Commit to storage
+		  editor.commit();	
+	}
+	
+	void restorePersState() {
+		  SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+		  curPath = preferences.getString("curPath", root);
+	}
+	
+}
